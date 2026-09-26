@@ -1325,9 +1325,9 @@ export const INITIAL_CLIENTS = [
       { id: "n-2", date: "2026-08-14", author: "Front Desk", text: "Sensitive to lavender aromas. Always use eucalyptus or chamomile oils." }
     ],
     history: [
-      { id: "h-1", date: "2026-09-10", service: "Luxury Aromatherapy Spa Ritual", staff: "Marcus Vance", amount: 220, status: "Completed" },
-      { id: "h-2", date: "2026-08-14", service: "HydraFacial Glow & Lift", staff: "Maya Lin", amount: 280, status: "Completed" },
-      { id: "h-3", date: "2026-07-02", service: "Signature Balayage & Gloss", staff: "Sarah Jenkins", amount: 320, status: "Completed" }
+      { id: "h-1", date: "2026-09-10", service: "Red Carpet Facial", staff: "Marcus Vance", amount: 7000, status: "Completed" },
+      { id: "h-2", date: "2026-08-14", service: "Hydrafacial Regular", staff: "Maya Lin", amount: 5000, status: "Completed" },
+      { id: "h-3", date: "2026-07-02", service: "Hydrafacial Advance", staff: "Sarah Jenkins", amount: 8000, status: "Completed" }
     ]
   },
   {
@@ -1346,8 +1346,8 @@ export const INITIAL_CLIENTS = [
       { id: "n-4", date: "2026-08-20", author: "Sarah J.", text: "Purchased full size Gloss Gold Serum ($185)." }
     ],
     history: [
-      { id: "h-4", date: "2026-09-12", service: "Collagen Microneedling Therapy", staff: "Maya Lin", amount: 450, status: "Completed" },
-      { id: "h-5", date: "2026-08-20", service: "HydraFacial Glow & Lift", staff: "Maya Lin", amount: 280, status: "Completed" }
+      { id: "h-4", date: "2026-09-12", service: "Dermapen Microneedling", staff: "Maya Lin", amount: 5000, status: "Completed" },
+      { id: "h-5", date: "2026-08-20", service: "Hydrafacial Regular", staff: "Maya Lin", amount: 5000, status: "Completed" }
     ]
   },
   {
@@ -1365,7 +1365,7 @@ export const INITIAL_CLIENTS = [
       { id: "n-5", date: "2026-09-01", author: "Sarah J.", text: "Prefers warm champagne blonde toner, no cool ash tones." }
     ],
     history: [
-      { id: "h-6", date: "2026-09-01", service: "Signature Balayage & Gloss", staff: "Sarah Jenkins", amount: 320, status: "Completed" }
+      { id: "h-6", date: "2026-09-01", service: "Hydrafacial Advance", staff: "Sarah Jenkins", amount: 8000, status: "Completed" }
     ]
   },
   {
@@ -1383,7 +1383,7 @@ export const INITIAL_CLIENTS = [
       { id: "n-6", date: "2026-09-08", author: "Front Desk", text: "Books standing bi-weekly appointment on Tuesdays at 10 AM." }
     ],
     history: [
-      { id: "h-7", date: "2026-09-08", service: "HydraFacial Glow & Lift", staff: "Maya Lin", amount: 280, status: "Completed" }
+      { id: "h-7", date: "2026-09-08", service: "Hydrafacial Regular", staff: "Maya Lin", amount: 5000, status: "Completed" }
     ]
   },
   {
@@ -1401,7 +1401,7 @@ export const INITIAL_CLIENTS = [
       { id: "n-7", date: "2026-08-28", author: "Chloe B.", text: "Loves sleek volume blowout before major tech keynotes." }
     ],
     history: [
-      { id: "h-8", date: "2026-08-28", service: "Sculptural Haircut & Blowout", staff: "Chloe Bennett", amount: 140, status: "Completed" }
+      { id: "h-8", date: "2026-08-28", service: "Dermaplaning Treatment", staff: "Chloe Bennett", amount: 5000, status: "Completed" }
     ]
   }
 ];
@@ -1413,7 +1413,7 @@ export const INITIAL_APPOINTMENTS = [
     clientName: "Jane Doe",
     clientPhone: "(555) 234-8901",
     serviceId: "srv-3",
-    serviceName: "Luxury Aromatherapy Spa Ritual",
+    serviceName: "Red Carpet Facial",
     category: "Spa",
     staffId: "staff-3",
     staffName: "Marcus Vance",
@@ -1430,7 +1430,7 @@ export const INITIAL_APPOINTMENTS = [
     clientName: "Elena Rostova",
     clientPhone: "(555) 876-1234",
     serviceId: "srv-2",
-    serviceName: "HydraFacial Glow & Lift",
+    serviceName: "Hydrafacial Regular",
     category: "Aesthetic",
     staffId: "staff-2",
     staffName: "Maya Lin",
@@ -1447,7 +1447,7 @@ export const INITIAL_APPOINTMENTS = [
     clientName: "Sophia Martinez",
     clientPhone: "(555) 432-9876",
     serviceId: "srv-1",
-    serviceName: "Signature Balayage & Gloss",
+    serviceName: "Hydrafacial Advance",
     category: "Hair",
     staffId: "staff-1",
     staffName: "Sarah Jenkins",
@@ -1464,7 +1464,7 @@ export const INITIAL_APPOINTMENTS = [
     clientName: "Victoria Sterling",
     clientPhone: "(555) 998-2211",
     serviceId: "srv-5",
-    serviceName: "Collagen Microneedling Therapy",
+    serviceName: "Dermapen Microneedling",
     category: "Aesthetic",
     staffId: "staff-2",
     staffName: "Maya Lin",
@@ -1481,7 +1481,7 @@ export const INITIAL_APPOINTMENTS = [
     clientName: "Amanda Chen",
     clientPhone: "(555) 667-4433",
     serviceId: "srv-4",
-    serviceName: "Sculptural Haircut & Blowout",
+    serviceName: "Dermaplaning Treatment",
     category: "Hair",
     staffId: "staff-4",
     staffName: "Chloe Bennett",
@@ -1498,7 +1498,7 @@ export const INITIAL_APPOINTMENTS = [
     clientName: "Jane Doe",
     clientPhone: "(555) 234-8901",
     serviceId: "srv-3",
-    serviceName: "Luxury Aromatherapy Spa Ritual",
+    serviceName: "Red Carpet Facial",
     category: "Spa",
     staffId: "staff-3",
     staffName: "Marcus Vance",
@@ -1515,21 +1515,21 @@ export const INITIAL_ACTIVITIES = [
   {
     id: "act-1",
     time: "10 mins ago",
-    text: "Jane Doe completed Luxury Aromatherapy Spa Ritual with Marcus Vance ($220)",
+    text: "Jane Doe completed Red Carpet Facial with Marcus Vance ($220)",
     category: "Spa",
     type: "completed"
   },
   {
     id: "act-2",
     time: "25 mins ago",
-    text: "Elena Rostova checked in for HydraFacial Glow & Lift with Maya Lin",
+    text: "Elena Rostova checked in for Hydrafacial Regular with Maya Lin",
     category: "Aesthetic",
     type: "checkin"
   },
   {
     id: "act-3",
     time: "1 hour ago",
-    text: "Sophia Martinez booked Signature Balayage for today at 11:00 AM",
+    text: "Sophia Martinez booked Hydrafacial Advance for today at 11:00 AM",
     category: "Hair",
     type: "booking"
   },
@@ -1543,7 +1543,7 @@ export const INITIAL_ACTIVITIES = [
   {
     id: "act-5",
     time: "3 hours ago",
-    text: "New client Amanda Chen booked Sculptural Haircut & Blowout",
+    text: "New client Amanda Chen booked Dermaplaning Treatment",
     category: "Hair",
     type: "new_client"
   }
