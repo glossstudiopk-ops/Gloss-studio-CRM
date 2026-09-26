@@ -129,7 +129,7 @@ export default function ServicesPricing({ services, onAddService }) {
               <div className="mt-5 pt-4 border-t border-[#F0ECE1] flex items-center justify-between">
                 <div className="flex items-center space-x-1.5 text-xs text-[#6B7280]">
                   <Clock size={14} className="text-[#C5A059]" />
-                  <span className="font-semibold">{service.duration} mins</span>
+                  <span className="font-semibold">{service.duration ? `${service.duration} mins` : 'Duration not set'}</span>
                 </div>
 
                 <div className="text-right">
