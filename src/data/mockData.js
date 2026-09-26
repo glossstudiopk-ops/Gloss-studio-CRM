@@ -62,42 +62,6 @@ export const INITIAL_STAFF = [
 
 export const INITIAL_SERVICES = [
   {
-    id: "srv-1",
-    name: "Signature Balayage & Gloss",
-    category: "Hair",
-    duration: 120,
-    price: 320,
-    description: "Custom hand-painted highlights with nourishing gloss finish and signature blowout.",
-    popular: true
-  },
-  {
-    id: "srv-3",
-    name: "Luxury Aromatherapy Spa Ritual",
-    category: "Spa",
-    duration: 90,
-    price: 220,
-    description: "Full-body hot stone massage infused with custom essential oils and organic scalp treatment.",
-    popular: true
-  },
-  {
-    id: "srv-4",
-    name: "Sculptural Haircut & Blowout",
-    category: "Hair",
-    duration: 60,
-    price: 140,
-    description: "Tailored haircut customized to face shape followed by botanical conditioning mask.",
-    popular: false
-  },
-  {
-    id: "srv-6",
-    name: "Deep Tissue & Muscular Release",
-    category: "Spa",
-    duration: 60,
-    price: 160,
-    description: "Targeted therapeutic massage releasing chronic tension and restoring energy.",
-    popular: false
-  },
-  {
     id: "aesth-001",
     name: "PDO cog Thread Lift",
     category: "Aesthetic",
@@ -150,7 +114,7 @@ export const INITIAL_SERVICES = [
     price: 20000,
     priceLabel: "Rs. 20,000 / ml",
     description: "Fillers (Hyaluronic & Natural)",
-    popular: true
+    popular: false
   },
   {
     id: "aesth-006",
@@ -203,8 +167,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 8000,
-    priceLabel: "8–10 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "8–10 units",
+    unitRate: 1000,
+    units: "8–10 units",
+    description: "Upper Face • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -214,8 +180,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 6000,
-    priceLabel: "6–8 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "6–8 units",
+    unitRate: 1000,
+    units: "6–8 units",
+    description: "Upper Face • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -225,8 +193,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 4000,
-    priceLabel: "4 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "4 units",
+    unitRate: 1000,
+    units: "4 units",
+    description: "Upper Face • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -236,8 +206,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 10000,
-    priceLabel: "10–12 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "10–12 units",
+    unitRate: 1000,
+    units: "10–12 units",
+    description: "Upper Face • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -247,8 +219,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 4000,
-    priceLabel: "4–6 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "4–6 units",
+    unitRate: 1000,
+    units: "4–6 units",
+    description: "Upper Face • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -258,8 +232,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 2000,
-    priceLabel: "2–4 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "2–4 units",
+    unitRate: 1000,
+    units: "2–4 units",
+    description: "Lower Face & Other • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -269,8 +245,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 4000,
-    priceLabel: "4–8 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "4–8 units",
+    unitRate: 1000,
+    units: "4–8 units",
+    description: "Lower Face & Other • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -280,8 +258,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 2000,
-    priceLabel: "2–4 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "2–4 units",
+    unitRate: 1000,
+    units: "2–4 units",
+    description: "Lower Face & Other • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -291,8 +271,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 24000,
-    priceLabel: "24 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "24 units",
+    unitRate: 1000,
+    units: "24 units",
+    description: "Lower Face & Other • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -302,8 +284,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 4000,
-    priceLabel: "4–8 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "4–8 units",
+    unitRate: 1000,
+    units: "4–8 units",
+    description: "Lower Face & Other • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -313,8 +297,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 10000,
-    priceLabel: "10–30 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "10–30 units",
+    unitRate: 1000,
+    units: "10–30 units",
+    description: "Lower Face & Other • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -324,8 +310,10 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 100000,
-    priceLabel: "100 units × Rs. 1,000/unit",
-    description: "Botox Treatments",
+    priceLabel: "100 units",
+    unitRate: 1000,
+    units: "100 units",
+    description: "Lower Face & Other • Flat Rate: Rs. 1,000 per unit of Botox.",
     popular: false
   },
   {
@@ -335,9 +323,9 @@ export const INITIAL_SERVICES = [
     subcategory: "Botox Treatments",
     duration: null,
     price: 50000,
-    priceLabel: "Rs. 50,000",
-    description: "Botox Treatments",
-    popular: true
+    priceLabel: "Rs. 50,000/-",
+    description: "Lower Face & Other • Fixed price as listed in the VVIP price list.",
+    popular: false
   },
   {
     id: "aesth-023",
@@ -392,7 +380,7 @@ export const INITIAL_SERVICES = [
     price: 30000,
     priceLabel: "Rs. 30,000",
     description: "HIFU 9D New Doublo",
-    popular: true
+    popular: false
   },
   {
     id: "aesth-028",
@@ -412,9 +400,9 @@ export const INITIAL_SERVICES = [
     subcategory: "MFU (RF Cyclone)",
     duration: null,
     price: 10000,
-    priceLabel: "Rs. 10,000",
+    priceLabel: "Rs. 10,000/-",
     description: "MFU (RF Cyclone)",
-    popular: true
+    popular: false
   },
   {
     id: "aesth-030",
@@ -423,7 +411,7 @@ export const INITIAL_SERVICES = [
     subcategory: "MFU (RF Cyclone)",
     duration: null,
     price: 5000,
-    priceLabel: "Rs. 5,000 / ea",
+    priceLabel: "Rs. 5,000/- ea",
     description: "MFU (RF Cyclone)",
     popular: false
   },
@@ -434,7 +422,7 @@ export const INITIAL_SERVICES = [
     subcategory: "MFU (RF Cyclone)",
     duration: null,
     price: 4000,
-    priceLabel: "Rs. 4,000",
+    priceLabel: "Rs. 4,000/-",
     description: "MFU (RF Cyclone)",
     popular: false
   },
@@ -445,7 +433,7 @@ export const INITIAL_SERVICES = [
     subcategory: "MFU (RF Cyclone)",
     duration: null,
     price: 3000,
-    priceLabel: "Rs. 3,000",
+    priceLabel: "Rs. 3,000/-",
     description: "MFU (RF Cyclone)",
     popular: false
   },
@@ -456,7 +444,7 @@ export const INITIAL_SERVICES = [
     subcategory: "MFU (RF Cyclone)",
     duration: null,
     price: 2000,
-    priceLabel: "Rs. 2,000",
+    priceLabel: "Rs. 2,000/-",
     description: "MFU (RF Cyclone)",
     popular: false
   },
@@ -467,7 +455,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Cavitation Packages & RFMN",
     duration: null,
     price: 20000,
-    priceLabel: "Rs. 20k - 50k / ses",
+    priceLabel: "Rs. 20k - 50k /ses",
     description: "Cavitation Packages & RFMN",
     popular: false
   },
@@ -478,7 +466,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Cavitation Packages & RFMN",
     duration: null,
     price: 15000,
-    priceLabel: "Rs. 15k - 30k / ses",
+    priceLabel: "Rs. 15k - 30k /ses",
     description: "Cavitation Packages & RFMN",
     popular: false
   },
@@ -654,7 +642,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Exosomes & Stem Cells — Human Adipose Tissue-Derived",
     duration: null,
     price: 45000,
-    priceLabel: "Rs. 45,000",
+    priceLabel: "Rs. 45,000/-",
     description: "Exosomes & Stem Cells — Human Adipose Tissue-Derived",
     popular: false
   },
@@ -665,7 +653,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Exosomes & Stem Cells — Human Adipose Tissue-Derived",
     duration: null,
     price: 45000,
-    priceLabel: "Rs. 45,000",
+    priceLabel: "Rs. 45,000/-",
     description: "Exosomes & Stem Cells — Human Adipose Tissue-Derived",
     popular: false
   },
@@ -676,7 +664,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Exosomes & Stem Cells — Human Adipose Tissue-Derived",
     duration: null,
     price: 45000,
-    priceLabel: "Rs. 45,000",
+    priceLabel: "Rs. 45,000/-",
     description: "Exosomes & Stem Cells — Human Adipose Tissue-Derived",
     popular: false
   },
@@ -684,22 +672,22 @@ export const INITIAL_SERVICES = [
     id: "aesth-054",
     name: "ExoRev (per ml)",
     category: "Aesthetic",
-    subcategory: "Exosomes & Stem Cells — Plant Derived",
+    subcategory: "Exosomes & Stem Cells — Plant Derived (1.1 Million/ml)",
     duration: null,
     price: 7000,
     priceLabel: "Rs. 7,000",
-    description: "Exosomes & Stem Cells — Plant Derived",
+    description: "Exosomes & Stem Cells — Plant Derived (1.1 Million/ml)",
     popular: false
   },
   {
     id: "aesth-055",
     name: "ExoRev (5ml Bundle)",
     category: "Aesthetic",
-    subcategory: "Exosomes & Stem Cells — Plant Derived",
+    subcategory: "Exosomes & Stem Cells — Plant Derived (1.1 Million/ml)",
     duration: null,
     price: 35000,
     priceLabel: "Rs. 35,000",
-    description: "Exosomes & Stem Cells — Plant Derived",
+    description: "Exosomes & Stem Cells — Plant Derived (1.1 Million/ml)",
     popular: false
   },
   {
@@ -709,7 +697,7 @@ export const INITIAL_SERVICES = [
     subcategory: "PRP & PRF",
     duration: null,
     price: 10000,
-    priceLabel: "Rs. 10,000",
+    priceLabel: "Rs. 10,000/-",
     description: "PRP & PRF",
     popular: false
   },
@@ -720,7 +708,7 @@ export const INITIAL_SERVICES = [
     subcategory: "PRP & PRF",
     duration: null,
     price: 5000,
-    priceLabel: "Rs. 5,000",
+    priceLabel: "Rs. 5,000/-",
     description: "PRP & PRF",
     popular: false
   },
@@ -731,7 +719,7 @@ export const INITIAL_SERVICES = [
     subcategory: "PRP & PRF",
     duration: null,
     price: 15000,
-    priceLabel: "Rs. 15,000",
+    priceLabel: "Rs. 15,000/-",
     description: "PRP & PRF",
     popular: false
   },
@@ -742,7 +730,7 @@ export const INITIAL_SERVICES = [
     subcategory: "PRP & PRF",
     duration: null,
     price: 7000,
-    priceLabel: "Rs. 7,000",
+    priceLabel: "Rs. 7,000/-",
     description: "PRP & PRF",
     popular: false
   },
@@ -753,7 +741,7 @@ export const INITIAL_SERVICES = [
     subcategory: "PRGF (Plasma Rich in Growth Factors)",
     duration: null,
     price: 25000,
-    priceLabel: "Rs. 25,000",
+    priceLabel: "Rs. 25,000/-",
     description: "PRGF (Plasma Rich in Growth Factors)",
     popular: false
   },
@@ -764,7 +752,7 @@ export const INITIAL_SERVICES = [
     subcategory: "PRGF (Plasma Rich in Growth Factors)",
     duration: null,
     price: 25000,
-    priceLabel: "Rs. 25,000",
+    priceLabel: "Rs. 25,000/-",
     description: "PRGF (Plasma Rich in Growth Factors)",
     popular: false
   },
@@ -775,7 +763,7 @@ export const INITIAL_SERVICES = [
     subcategory: "PRGF (Plasma Rich in Growth Factors)",
     duration: null,
     price: 15000,
-    priceLabel: "Rs. 15,000",
+    priceLabel: "Rs. 15,000/-",
     description: "PRGF (Plasma Rich in Growth Factors)",
     popular: false
   },
@@ -783,7 +771,7 @@ export const INITIAL_SERVICES = [
     id: "aesth-063",
     name: "Meso Shine",
     category: "Aesthetic",
-    subcategory: "Mesotherapy",
+    subcategory: "Mesotherapy (Rs. 5,000 / ml)",
     duration: null,
     price: 5000,
     priceLabel: "Rs. 5,000 / ml",
@@ -794,7 +782,7 @@ export const INITIAL_SERVICES = [
     id: "aesth-064",
     name: "Meso Clear",
     category: "Aesthetic",
-    subcategory: "Mesotherapy",
+    subcategory: "Mesotherapy (Rs. 5,000 / ml)",
     duration: null,
     price: 5000,
     priceLabel: "Rs. 5,000 / ml",
@@ -805,7 +793,7 @@ export const INITIAL_SERVICES = [
     id: "aesth-065",
     name: "Meso Radiance",
     category: "Aesthetic",
-    subcategory: "Mesotherapy",
+    subcategory: "Mesotherapy (Rs. 5,000 / ml)",
     duration: null,
     price: 5000,
     priceLabel: "Rs. 5,000 / ml",
@@ -816,7 +804,7 @@ export const INITIAL_SERVICES = [
     id: "aesth-066",
     name: "Meso Hair",
     category: "Aesthetic",
-    subcategory: "Mesotherapy",
+    subcategory: "Mesotherapy (Rs. 5,000 / ml)",
     duration: null,
     price: 5000,
     priceLabel: "Rs. 5,000 / ml",
@@ -827,7 +815,7 @@ export const INITIAL_SERVICES = [
     id: "aesth-067",
     name: "Meso Scar",
     category: "Aesthetic",
-    subcategory: "Mesotherapy",
+    subcategory: "Mesotherapy (Rs. 5,000 / ml)",
     duration: null,
     price: 5000,
     priceLabel: "Rs. 5,000 / ml",
@@ -841,7 +829,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Chemical Peels (with High Frequency)",
     duration: null,
     price: 5000,
-    priceLabel: "Rs. 5,000 / ea",
+    priceLabel: "Rs. 5,000/- ea",
     description: "Chemical Peels (with High Frequency)",
     popular: false
   },
@@ -852,7 +840,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Chemical Peels (with High Frequency)",
     duration: null,
     price: 3000,
-    priceLabel: "Rs. 3,000 / ea",
+    priceLabel: "Rs. 3,000/- ea",
     description: "Chemical Peels (with High Frequency)",
     popular: false
   },
@@ -863,7 +851,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Chemical Peels (with High Frequency)",
     duration: null,
     price: 7000,
-    priceLabel: "Rs. 7,000 / ea",
+    priceLabel: "Rs. 7,000/- ea",
     description: "Chemical Peels (with High Frequency)",
     popular: false
   },
@@ -874,7 +862,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Chemical Peels (with High Frequency)",
     duration: null,
     price: 25000,
-    priceLabel: "Rs. 25,000",
+    priceLabel: "Rs. 25,000/-",
     description: "Chemical Peels (with High Frequency)",
     popular: false
   },
@@ -885,7 +873,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Handcare & Footcare Packages",
     duration: null,
     price: 5000,
-    priceLabel: "Rs. 5,000",
+    priceLabel: "Rs. 5,000/-",
     description: "Handcare & Footcare Packages",
     popular: false
   },
@@ -896,7 +884,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Handcare & Footcare Packages",
     duration: null,
     price: 5000,
-    priceLabel: "Rs. 5,000",
+    priceLabel: "Rs. 5,000/-",
     description: "Handcare & Footcare Packages",
     popular: false
   },
@@ -907,7 +895,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Handcare & Footcare Packages",
     duration: null,
     price: 8000,
-    priceLabel: "Rs. 8,000",
+    priceLabel: "Rs. 8,000/-",
     description: "Handcare & Footcare Packages",
     popular: false
   },
@@ -920,7 +908,7 @@ export const INITIAL_SERVICES = [
     price: 5000,
     priceLabel: "Rs. 5,000",
     description: "Laser Hair Removal — Face & Upper Body",
-    popular: true
+    popular: false
   },
   {
     id: "aesth-076",
@@ -1063,7 +1051,7 @@ export const INITIAL_SERVICES = [
     price: 5000,
     priceLabel: "Rs. 5,000",
     description: "Standard Facials",
-    popular: true
+    popular: false
   },
   {
     id: "aesth-089",
@@ -1259,7 +1247,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Electric Cautery (Tags, Warts, Milia)",
     duration: null,
     price: 1900,
-    priceLabel: "Rs. 1,900",
+    priceLabel: "Rs. 1,900/-",
     description: "Electric Cautery (Tags, Warts, Milia)",
     popular: false
   },
@@ -1270,7 +1258,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Electric Cautery (Tags, Warts, Milia)",
     duration: null,
     price: 3500,
-    priceLabel: "Rs. 3,500",
+    priceLabel: "Rs. 3,500/-",
     description: "Electric Cautery (Tags, Warts, Milia)",
     popular: false
   },
@@ -1281,7 +1269,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Electric Cautery (Tags, Warts, Milia)",
     duration: null,
     price: 4800,
-    priceLabel: "Rs. 4,800",
+    priceLabel: "Rs. 4,800/-",
     description: "Electric Cautery (Tags, Warts, Milia)",
     popular: false
   },
@@ -1292,7 +1280,7 @@ export const INITIAL_SERVICES = [
     subcategory: "Electric Cautery (Tags, Warts, Milia)",
     duration: null,
     price: 5800,
-    priceLabel: "Rs. 5,800",
+    priceLabel: "Rs. 5,800/-",
     description: "Electric Cautery (Tags, Warts, Milia)",
     popular: false
   },
