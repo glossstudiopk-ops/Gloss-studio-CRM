@@ -104,7 +104,7 @@ export default function AddAppointmentModal({
             >
               {services.map(s => (
                 <option key={s.id} value={s.id}>
-                  [{s.category}] {s.name} - {s.priceLabel || `${s.price}`} ({s.duration} mins)
+                  [{s.subcategory || s.category}] {s.name} - {s.priceLabel || `Rs. ${s.price}`}{s.unitRate ? ` • Rs. ${s.unitRate.toLocaleString()}/unit` : ''}{s.duration ? ` (${s.duration} mins)` : ''}
                 </option>
               ))}
             </select>
@@ -172,7 +172,10 @@ export default function AddAppointmentModal({
                 <span className="font-bold text-[#1F2937]">{currentService.name}</span>
               </div>
               <div className="text-right">
-                <span className="font-serif-luxury text-lg font-bold text-[#1F2937]">{currentService.priceLabel || `${currentService.price}`}</span>
+                <span className="font-serif-luxury text-lg font-bold text-[#1F2937]">{currentService.priceLabel || `Rs. ${currentService.price}`}</span>
+                {currentService.unitRate && (
+                  <span className="text-[10px] text-[#6B7280] block">Flat Rate: Rs. {currentService.unitRate.toLocaleString()} per unit</span>
+                )}
                 <span className="text-[10px] text-[#6B7280] block">{currentService.duration ? `${currentService.duration} mins` : 'Duration not set'}</span>
               </div>
             </div>
