@@ -1,204 +1,72 @@
-import React, { useState, useEffect } from 'react';
-import { X, Calendar, Clock, User, Sparkles, Plus, Check } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { X, Sparkles } from 'lucide-react';
 
-export default function AddAppointmentModal({ 
-  isOpen, 
-  onClose, 
-  clients, 
-  services, 
-  staff, 
-  onSave, 
-  initialData = {} 
-}) {
-  const [selectedClientId, setSelectedClientId] = useState(initialData.clientId || (clients[0]?.id || ''));
-  const [selectedServiceId, setSelectedServiceId] = useState(initialData.serviceId || (services[0]?.id || ''));
-  const [selectedStaffId, setSelectedStaffId] = useState(initialData.staffId || (staff[0]?.id || ''));
-  const [time, setTime] = useState(initialData.time || '10:00 AM');
-  const [date, setDate] = useState('2026-09-14');
-  const [notes, setNotes] = useState('');
+export default function AddAppointmentModal({isOpen,onClose,clients,services,staff,onSave,initialData={}}) {
+  const [clientId,setClientId]=useState('');
+  const [serviceId,setServiceId]=useState('');
+  const [staffId,setStaffId]=useState('');
+  const [time,setTime]=useState('10:00');
+  const [date,setDate]=useState(new Date().toISOString().slice(0,10));
+  const [status,setStatus]=useState('Upcoming');
+  const [price,setPrice]=useState('');
+  const [notes,setNotes]=useState('');
 
-  useEffect(() => {
-    if (initialData.clientId) setSelectedClientId(initialData.clientId);
-    if (initialData.staffId) setSelectedStaffId(initialData.staffId);
-    if (initialData.time) setTime(initialData.time);
-  }, [initialData]);
+  useEffect(()=>{
+    if(!isOpen) return;
+    setClientId(initialData.clientId || (clients[0] && clients[0].id) || '');
+    setServiceId(initialData.serviceId || (services[0] && services[0].id) || '');
+    setStaffId(initialData.staffId || (staff[0] && staff[0].id) || '');
+    setTime(initialData.time || '10:00');
+    setDate(initialData.date || new Date().toISOString().slice(0,10));
+  },[isOpen]);
 
-  if (!isOpen) return null;
+  const service=useMemo(()=>services.find(s=>s.id===serviceId),[services,serviceId]);
+  useEffect(()=>{ if(service) setPrice(String(service.price||'')); },[serviceId]);
 
-  const currentService = services.find(s => s.id === selectedServiceId) || services[0];
-  const currentClient = clients.find(c => c.id === selectedClientId) || clients[0];
-  const currentStaff = staff.find(st => st.id === selectedStaffId) || staff[0];
+  if(!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const client=clients.find(c=>c.id===clientId);
+  const member=staff.find(s=>s.id===staffId);
+
+  const submit=e=>{
     e.preventDefault();
-    if (!currentClient || !currentService || !currentStaff) return;
-
+    if(!client||!service||!member) return;
     onSave({
-      id: `apt-${Date.now()}`,
-      clientId: currentClient.id,
-      clientName: currentClient.name,
-      clientPhone: currentClient.phone,
-      serviceId: currentService.id,
-      serviceName: currentService.name,
-      category: currentService.category,
-      staffId: currentStaff.id,
-      staffName: currentStaff.name,
-      time,
-      date,
-      duration: currentService.duration,
-      price: currentService.price,
-      status: 'Upcoming',
-      notes: notes || 'Standard appointment booking.'
+      id:'apt-'+Date.now(),
+      clientId:client.id,clientName:client.name,clientPhone:client.phone||'',
+      serviceId:service.id,serviceName:service.name,category:'Aesthetic',
+      staffId:member.id,staffName:member.name,time,date,duration:service.duration,
+      price:Number(price)||0,status,notes
     });
-
     onClose();
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-      <div className="bg-white border border-[#E8DFD1] rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 animate-slide-in">
-        <div className="flex items-center justify-between border-b border-[#F0ECE1] pb-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] border border-[#E8DFD1] flex items-center justify-center text-[#C5A059]">
-              <Sparkles size={18} />
-            </div>
-            <div>
-              <h3 className="font-serif-luxury text-xl font-bold text-[#1F2937]">
-                New Salon Booking
-              </h3>
-              <p className="text-[11px] text-[#6B7280]">Select client, treatment suite, specialist & time</p>
-            </div>
-          </div>
-          <button 
-            onClick={onClose}
-            className="text-[#9CA3AF] hover:text-[#1F2937] p-1 rounded-lg"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-          {/* Client Select */}
-          <div>
-            <label className="block font-bold text-[#1F2937] mb-1">Select Client</label>
-            <select
-              value={selectedClientId}
-              onChange={(e) => setSelectedClientId(e.target.value)}
-              className="w-full p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl focus:border-[#C5A059] focus:outline-none font-medium text-[#1F2937]"
-            >
-              {clients.map(c => (
-                <option key={c.id} value={c.id}>
-                  {c.name} {c.isVip ? '(VIP)' : ''} - {c.phone}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Service Select */}
-          <div>
-            <label className="block font-bold text-[#1F2937] mb-1">Treatment Service</label>
-            <select
-              value={selectedServiceId}
-              onChange={(e) => setSelectedServiceId(e.target.value)}
-              className="w-full p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl focus:border-[#C5A059] focus:outline-none font-medium text-[#1F2937]"
-            >
-              {services.map(s => (
-                <option key={s.id} value={s.id}>
-                  [{s.subcategory || s.category}] {s.name} - {s.priceLabel || `Rs. ${s.price}`}{s.unitRate ? ` • Rs. ${s.unitRate.toLocaleString()}/unit` : ''}{s.duration ? ` (${s.duration} mins)` : ''}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Staff Select */}
-          <div>
-            <label className="block font-bold text-[#1F2937] mb-1">Assigned Specialist</label>
-            <select
-              value={selectedStaffId}
-              onChange={(e) => setSelectedStaffId(e.target.value)}
-              className="w-full p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl focus:border-[#C5A059] focus:outline-none font-medium text-[#1F2937]"
-            >
-              {staff.map(st => (
-                <option key={st.id} value={st.id}>
-                  {st.name} ({st.role})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Date & Time */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block font-bold text-[#1F2937] mb-1">Booking Date</label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl focus:border-[#C5A059] focus:outline-none text-[#1F2937]"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold text-[#1F2937] mb-1">Time Slot</label>
-              <select
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="w-full p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl focus:border-[#C5A059] focus:outline-none text-[#1F2937]"
-              >
-                {['08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'].map(t => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label className="block font-bold text-[#1F2937] mb-1">Appointment Notes</label>
-            <textarea
-              rows="2"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. Requested green tea, allergy warnings..."
-              className="w-full p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl focus:border-[#C5A059] focus:outline-none text-[#1F2937]"
-            ></textarea>
-          </div>
-
-          {/* Summary Card */}
-          {currentService && (
-            <div className="p-3 bg-[#F7F3EC] border border-[#E8DFD1] rounded-xl flex items-center justify-between">
-              <div>
-                <span className="text-[10px] text-[#6B7280] uppercase font-bold block">Summary</span>
-                <span className="font-bold text-[#1F2937]">{currentService.name}</span>
-              </div>
-              <div className="text-right">
-                <span className="font-serif-luxury text-lg font-bold text-[#1F2937]">{currentService.priceLabel || `Rs. ${currentService.price}`}</span>
-                {currentService.unitRate && (
-                  <span className="text-[10px] text-[#6B7280] block">Flat Rate: Rs. {currentService.unitRate.toLocaleString()} per unit</span>
-                )}
-                <span className="text-[10px] text-[#6B7280] block">{currentService.duration ? `${currentService.duration} mins` : 'Duration not set'}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Buttons */}
-          <div className="pt-2 flex justify-end space-x-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-[#FAF7F2] text-[#6B7280] rounded-xl font-bold hover:bg-gray-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-5 py-2 gold-gradient-bg text-white rounded-xl font-bold shadow-md hover:brightness-105"
-            >
-              Confirm Booking
-            </button>
-          </div>
-        </form>
+  return <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+    <div className="bg-white rounded-2xl border border-[#E8DFD1] max-w-lg w-full p-6 shadow-2xl">
+      <div className="flex items-center justify-between border-b border-[#F0ECE1] pb-3 mb-4">
+        <div className="flex items-center gap-2"><Sparkles size={18} className="text-[#C5A059]"/><h3 className="font-serif-luxury text-xl font-bold">New Appointment</h3></div>
+        <button onClick={onClose}><X size={18}/></button>
       </div>
+      {clients.length===0||staff.length===0?
+        <div className="text-sm text-[#6B7280] bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl p-5">Before creating an appointment, add at least one customer and one staff member.</div>
+        :
+        <form onSubmit={submit} className="space-y-4 text-xs">
+          <div><label className="font-bold">Customer</label><select value={clientId} onChange={e=>setClientId(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl">{clients.map(c=><option key={c.id} value={c.id}>{c.name}{c.phone?' — '+c.phone:''}</option>)}</select></div>
+          <div><label className="font-bold">Treatment</label><select value={serviceId} onChange={e=>setServiceId(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl">{services.map(s=><option key={s.id} value={s.id}>{s.subcategory} — {s.name} — {s.priceLabel}</option>)}</select></div>
+          <div><label className="font-bold">Assigned Staff</label><select value={staffId} onChange={e=>setStaffId(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl">{staff.map(s=><option key={s.id} value={s.id}>{s.name} — {s.role}</option>)}</select></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="font-bold">Date</label><input type="date" value={date} onChange={e=>setDate(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl"/></div>
+            <div><label className="font-bold">Time</label><input type="time" value={time} onChange={e=>setTime(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl"/></div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="font-bold">Final Price (Rs.)</label><input type="number" min="0" value={price} onChange={e=>setPrice(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl"/></div>
+            <div><label className="font-bold">Status</label><select value={status} onChange={e=>setStatus(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl"><option>Upcoming</option><option>In Progress</option><option>Completed</option><option>Cancelled</option></select></div>
+          </div>
+          {service&&service.unitRate&&<div className="p-3 bg-[#F7F3EC] border border-[#E8DFD1] rounded-xl"><b>Botox pricing:</b> {service.units} at a flat rate of Rs. {service.unitRate.toLocaleString()} per unit. Adjust the final price according to the actual units used.</div>}
+          <div><label className="font-bold">Notes</label><textarea rows="2" value={notes} onChange={e=>setNotes(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl"/></div>
+          <div className="flex justify-end gap-2"><button type="button" onClick={onClose} className="px-4 py-2 rounded-xl bg-[#FAF7F2] border border-[#E8DFD1] font-bold">Cancel</button><button className="px-4 py-2 rounded-xl gold-gradient-bg text-white font-bold">Save Appointment</button></div>
+        </form>
+      }
     </div>
-  );
+  </div>
 }
