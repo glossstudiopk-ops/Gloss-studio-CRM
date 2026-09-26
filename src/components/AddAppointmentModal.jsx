@@ -173,7 +173,7 @@ export default function AddAppointmentModal({
               </div>
               <div className="text-right">
                 <span className="font-serif-luxury text-lg font-bold text-[#1F2937]">{currentService.priceLabel || `${currentService.price}`}</span>
-                <span className="text-[10px] text-[#6B7280] block">{currentService.duration} mins</span>
+                <span className="text-[10px] text-[#6B7280] block">{currentService.duration ? `${currentService.duration} mins` : 'Duration not set'}</span>
               </div>
             </div>
           )}
