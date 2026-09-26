@@ -8,14 +8,14 @@ export default function ServicesPricing({ services, onAddService }) {
 
   const [newService, setNewService] = useState({
     name: '',
-    category: 'Hair',
+    category: 'Aesthetic',
     duration: 60,
-    price: 150,
+    price: 0,
     description: '',
     popular: false
   });
 
-  const categories = ['All', 'Hair', 'Aesthetic', 'Spa'];
+  const categories = ['All', 'Aesthetic'];
 
   const filteredServices = services.filter(s => {
     if (activeCategory !== 'All' && s.category !== activeCategory) return false;
@@ -134,8 +134,13 @@ export default function ServicesPricing({ services, onAddService }) {
 
                 <div className="text-right">
                   <span className="font-serif-luxury text-2xl font-bold text-[#1F2937]">
-                    {service.priceLabel || `${service.price}`}
+                    {service.priceLabel || `Rs. ${service.price}`}
                   </span>
+                  {service.unitRate && (
+                    <span className="block text-[10px] font-semibold text-[#6B7280] mt-1">
+                      Flat Rate: Rs. {service.unitRate.toLocaleString()} per unit
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -167,7 +172,7 @@ export default function ServicesPricing({ services, onAddService }) {
                   required
                   value={newService.name}
                   onChange={(e) => setNewService({ ...newService, name: e.target.value })}
-                  placeholder="e.g. Organic Scalp & Hair Detox"
+                  placeholder="e.g. Aesthetic treatment name"
                   className="w-full p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl focus:border-[#C5A059] focus:outline-none"
                 />
               </div>
@@ -180,9 +185,7 @@ export default function ServicesPricing({ services, onAddService }) {
                     onChange={(e) => setNewService({ ...newService, category: e.target.value })}
                     className="w-full p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl focus:border-[#C5A059] focus:outline-none"
                   >
-                    <option value="Hair">Hair</option>
                     <option value="Aesthetic">Aesthetic</option>
-                    <option value="Spa">Spa</option>
                   </select>
                 </div>
 
@@ -199,7 +202,7 @@ export default function ServicesPricing({ services, onAddService }) {
               </div>
 
               <div>
-                <label className="block font-bold text-[#1F2937] mb-1">Price ($)</label>
+                <label className="block font-bold text-[#1F2937] mb-1">Base Price (Rs.)</label>
                 <input
                   type="number"
                   required
