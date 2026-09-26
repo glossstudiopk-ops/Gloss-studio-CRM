@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Clock, DollarSign, Plus, Scissors, Flower2, Search, Check } from 'lucide-react';
 
-export default function ServicesPricing({ services, onAddService }) {
+export default function ServicesPricing({ services, onAddService, canEdit = false }) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -86,13 +86,15 @@ export default function ServicesPricing({ services, onAddService }) {
             />
           </div>
 
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="gold-gradient-bg text-white px-4 py-1.5 rounded-xl text-xs font-bold shadow-xs hover:brightness-105 transition-all flex items-center space-x-1"
-          >
-            <Plus size={16} />
-            <span>Add Service</span>
-          </button>
+          {canEdit && (
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="gold-gradient-bg text-white px-4 py-1.5 rounded-xl text-xs font-bold shadow-xs hover:brightness-105 transition-all flex items-center space-x-1"
+            >
+              <Plus size={16} />
+              <span>Add Service</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -149,7 +151,7 @@ export default function ServicesPricing({ services, onAddService }) {
       </div>
 
       {/* Add New Service Modal */}
-      {showAddModal && (
+      {canEdit && showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
           <div className="bg-white border border-[#E8DFD1] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-[#F0ECE1] pb-3">
