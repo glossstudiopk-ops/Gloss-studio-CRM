@@ -102,7 +102,12 @@ export default function App() {
 
   const createInvoice=(invoice)=>{
     setInvoices(prev=>[invoice,...prev]);
-    setClients(prev=>prev.map(c=>c.id===invoice.clientId?{...c,totalSpent:Number(c.totalSpent||0)+invoice.amount,lastVisit:invoice.date}:c));
+    setClients(prev=>prev.map(c=>c.id===invoice.clientId?{
+      ...c,
+      totalSpent:Number(c.totalSpent||0)+invoice.amount,
+      lastVisit:invoice.date,
+      history:[{id:'history-'+Date.now(),date:invoice.date,service:invoice.serviceName,staff:'',amount:invoice.amount,status:'Completed'},...(c.history||[])]
+    }:c));
     setActivities(prev=>[{id:`act-${Date.now()}`,time:'Just now',text:`Invoice ${invoice.number} generated for ${invoice.clientName} — Rs. ${invoice.amount.toLocaleString()}`,category:'Aesthetic',type:'invoice'},...prev]);
   };
 
