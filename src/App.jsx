@@ -132,7 +132,7 @@ export default function App() {
           {activeTab==='dashboard'&&<DashboardOverview kpis={kpis} appointments={appointments} activities={activities} clients={clients} invoices={invoices} expenses={expenses} onOpenAddAppointment={()=>openAppointment()} setActiveTab={setActiveTab} role={role}/>}
           {activeTab==='calendar'&&<AppointmentsCalendar appointments={appointments} staff={staff} clients={clients} onOpenAddAppointment={openAppointment}/>}
           {activeTab==='clients'&&<ClientDatabase clients={clients} onSelectClient={setSelectedClient} onOpenAddClient={()=>setIsAddClientOpen(true)} searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>}
-          {activeTab==='services'&&<ServicesPricing services={services} onAddService={addService}/>}
+          {activeTab==='services'&&<ServicesPricing services={services} onAddService={addService} canEdit={role==='admin'}/>}
           {activeTab==='staff'&&role==='admin'&&<StaffManagement staff={staff} appointments={appointments} accounts={accounts} onAddStaff={addStaff}/>}
           {activeTab==='invoices'&&<Invoices invoices={invoices} clients={clients} services={services} onCreateInvoice={createInvoice} canCreate={role==='admin'||role==='reception'}/>}
           {activeTab==='expenses'&&<Expenses expenses={expenses} onAddExpense={addExpense} canCreate={role==='admin'||role==='reception'}/>}
