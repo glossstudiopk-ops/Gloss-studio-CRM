@@ -114,7 +114,7 @@ export default function ServicesPricing({ services, onAddService }) {
               <div>
                 <div className="flex items-center space-x-2 text-xs text-[#C5A059] font-bold mb-2">
                   <CategoryIcon size={14} />
-                  <span>{service.category} Suite</span>
+                  <span>{service.subcategory || `${service.category} Suite`}</span>
                 </div>
 
                 <h3 className="font-serif-luxury text-xl font-bold text-[#1F2937]">
@@ -134,7 +134,7 @@ export default function ServicesPricing({ services, onAddService }) {
 
                 <div className="text-right">
                   <span className="font-serif-luxury text-2xl font-bold text-[#1F2937]">
-                    ${service.price}
+                    {service.priceLabel || `${service.price}`}
                   </span>
                 </div>
               </div>
