@@ -140,8 +140,17 @@ export default function App() {
       setInvoices(invoiceList);
 
       const historyByClient={};
-      invoiceList.forEach(inv=>{
-        (historyByClient[inv.clientId] ||= []).push({id:'history-'+inv.id,date:inv.date,service:inv.serviceName,staff:'',amount:inv.amount,status:'Completed'});
+      (apptRes.data||[]).forEach(a=>{
+        (historyByClient[a.client_id] ||= []).push({
+          id:'visit-'+a.id,
+          date:a.appointment_date,
+          time:String(a.appointment_time||'').slice(0,5),
+          service:a.services?.name||'Treatment',
+          staff:a.staff?.full_name||'',
+          amount:Number(a.final_price||0),
+          status:statusToUi(a.status),
+          notes:a.notes||''
+        });
       });
       setClients((clientsRes.data||[]).map(c=>({
         id:c.id,name:c.full_name,phone:c.phone||'',email:c.email||'',isVip:c.is_vip,
@@ -195,13 +204,20 @@ export default function App() {
   };
 
   const saveAppointment=async(apt)=>{
-    const {error}=await supabase.from('appointments').insert({
-      client_id:apt.clientId,service_id:apt.serviceId,staff_id:apt.staffId,
-      appointment_date:apt.date,appointment_time:apt.time,status:statusToDb(apt.status),
-      final_price:Number(apt.price||0),notes:apt.notes||null,created_by:currentUser.id
+    const {data,error}=await supabase.rpc('create_booking_from_reception',{
+      p_customer_name:apt.customerName,
+      p_customer_phone:apt.customerPhone||null,
+      p_customer_email:apt.customerEmail||null,
+      p_service_id:apt.serviceId,
+      p_staff_id:apt.staffId,
+      p_appointment_date:apt.date,
+      p_appointment_time:apt.time,
+      p_final_price:Number(apt.price||0),
+      p_notes:apt.notes||null
     });
-    if(error) return alert(error.message);
+    if(error) return {ok:false,message:error.message};
     await loadData();
+    return {ok:true,isNewClient:!!data?.is_new_client,clientId:data?.client_id,appointmentId:data?.appointment_id};
   };
 
   const createInvoice=async(invoice)=>{
