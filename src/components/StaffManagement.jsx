@@ -8,17 +8,28 @@ export default function StaffManagement({staff,appointments,accounts,onAddStaff}
   const [jobTitle,setJobTitle]=useState('Aesthetic Staff');
   const [email,setEmail]=useState('');
   const [password,setPassword]=useState('');
+  const [submitting,setSubmitting]=useState(false);
+  const [formMessage,setFormMessage]=useState('');
 
   const submit=async(e)=>{
     e.preventDefault();
-    await onAddStaff({
+    if(submitting) return;
+    setSubmitting(true);
+    setFormMessage('');
+    const result=await onAddStaff({
       full_name:name.trim(),
       email:email.trim(),
       password,
       role:accountType,
       job_title:accountType==='staff'?jobTitle.trim():'Reception'
     });
-    setName('');setEmail('');setPassword('');setJobTitle('Aesthetic Staff');setAccountType('staff');setShow(false);
+    setSubmitting(false);
+    if(!result?.ok){
+      setFormMessage(result?.message||'Could not create account.');
+      return;
+    }
+    setFormMessage(result?.alreadyExists?'This account already exists and is available in the CRM.':'Account created successfully.');
+    setName('');setEmail('');setPassword('');setJobTitle('Aesthetic Staff');setAccountType('staff');
   };
 
   const receptionAccounts=(accounts||[]).filter(a=>a.role==='reception');
@@ -38,7 +49,8 @@ export default function StaffManagement({staff,appointments,accounts,onAddStaff}
       {accountType==='staff'&&<div><label className="font-bold">Work Role</label><input required value={jobTitle} onChange={e=>setJobTitle(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl" placeholder="e.g. Aesthetician"/></div>}
       <div><label className="font-bold">Login Email</label><input required type="email" value={email} onChange={e=>setEmail(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl"/></div>
       <div><label className="font-bold">Temporary Password</label><input required minLength="8" type="text" value={password} onChange={e=>setPassword(e.target.value)} className="w-full mt-1 p-2.5 bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl"/></div>
-      <div className="md:col-span-2 flex justify-end gap-2"><button type="button" onClick={()=>setShow(false)} className="px-4 py-2 rounded-xl bg-[#FAF7F2] border border-[#E8DFD1] font-bold">Cancel</button><button className="px-4 py-2 rounded-xl gold-gradient-bg text-white font-bold">Create {accountType==='staff'?'Staff':'Reception'} Account</button></div>
+      {formMessage&&<div className="md:col-span-2 p-3 rounded-xl bg-[#FAF7F2] border border-[#E8DFD1] text-[#6B7280]">{formMessage}</div>}
+      <div className="md:col-span-2 flex justify-end gap-2"><button type="button" onClick={()=>setShow(false)} className="px-4 py-2 rounded-xl bg-[#FAF7F2] border border-[#E8DFD1] font-bold">Cancel</button><button disabled={submitting} className="px-4 py-2 rounded-xl gold-gradient-bg text-white font-bold disabled:opacity-60">{submitting?'Creating...':`Create ${accountType==='staff'?'Staff':'Reception'} Account`}</button></div>
     </form>}
 
     <div>
