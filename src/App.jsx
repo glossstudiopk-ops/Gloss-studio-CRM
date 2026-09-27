@@ -237,8 +237,17 @@ export default function App() {
 
   const addStaffOrUser=async(payload)=>{
     const {data,error}=await supabase.functions.invoke('create-crm-user',{body:payload});
-    if(error||data?.error) return alert(data?.error||error.message);
+    if(error){
+      let message=error.message||'Could not create account';
+      try{
+        const body=await error.context?.json?.();
+        if(body?.error) message=body.error;
+      }catch{}
+      return {ok:false,message};
+    }
+    if(data?.error) return {ok:false,message:data.error};
     await loadData();
+    return {ok:true,message:data?.message||'Account created successfully.',alreadyExists:!!data?.already_exists};
   };
 
   const addService=async(service)=>{
