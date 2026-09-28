@@ -269,13 +269,45 @@ export default function App() {
   const addService=async(service)=>{
     const id=service.id||'custom-'+Date.now();
     const {error}=await supabase.from('services').insert({
-      id,name:service.name,category:'Aesthetic',subcategory:service.subcategory||'Custom',
-      duration_minutes:service.duration||null,base_price:Number(service.price||0),
+      id,
+      name:service.name,
+      category:'Aesthetic',
+      subcategory:service.subcategory||'Custom',
+      duration_minutes:service.duration||null,
+      base_price:Number(service.price||0),
       price_label:service.priceLabel||('Rs. '+Number(service.price||0).toLocaleString()),
-      description:service.description||null,active:true
+      unit_rate:service.unitRate||null,
+      units_label:service.units||null,
+      description:service.description||null,
+      active:true
     });
-    if(error) return alert(error.message);
+    if(error) return {ok:false,message:error.message};
     await loadData();
+    return {ok:true};
+  };
+
+  const updateService=async(service)=>{
+    const {error}=await supabase.from('services').update({
+      name:service.name,
+      category:'Aesthetic',
+      subcategory:service.subcategory||'Custom',
+      duration_minutes:service.duration||null,
+      base_price:Number(service.price||0),
+      price_label:service.priceLabel||('Rs. '+Number(service.price||0).toLocaleString()),
+      unit_rate:service.unitRate||null,
+      units_label:service.units||null,
+      description:service.description||null
+    }).eq('id',service.id);
+    if(error) return {ok:false,message:error.message};
+    await loadData();
+    return {ok:true};
+  };
+
+  const removeService=async(id)=>{
+    const {error}=await supabase.from('services').update({active:false}).eq('id',id);
+    if(error) return {ok:false,message:error.message};
+    await loadData();
+    return {ok:true};
   };
 
   const addNote=async(clientId,note)=>{
@@ -301,7 +333,7 @@ export default function App() {
         {activeTab==='dashboard'&&<DashboardOverview kpis={kpis} appointments={appointments} activities={activities} clients={clients} invoices={invoices} expenses={expenses} onOpenAddAppointment={()=>openAppointment()} setActiveTab={setActiveTab} role={role}/>}
         {activeTab==='calendar'&&<AppointmentsCalendar appointments={appointments} staff={staff} clients={clients} onOpenAddAppointment={openAppointment}/>}
         {activeTab==='clients'&&<ClientDatabase clients={clients} onSelectClient={setSelectedClient} onOpenAddClient={()=>setIsAddClientOpen(true)} searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>}
-        {activeTab==='services'&&<ServicesPricing services={services} onAddService={addService} canEdit={role==='admin'}/>}
+        {activeTab==='services'&&<ServicesPricing services={services} onAddService={addService} onUpdateService={updateService} onRemoveService={removeService} canEdit={role==='admin'}/>} 
         {activeTab==='staff'&&role==='admin'&&<StaffManagement staff={staff} appointments={appointments} accounts={profiles} onAddStaff={addStaffOrUser}/>}
         {activeTab==='invoices'&&<Invoices invoices={invoices} clients={clients} services={services} onCreateInvoice={createInvoice} canCreate={role==='admin'||role==='reception'}/>}
         {activeTab==='expenses'&&<Expenses expenses={expenses} onAddExpense={addExpense} canCreate={role==='admin'||role==='reception'}/>}
