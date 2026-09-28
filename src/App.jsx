@@ -25,6 +25,7 @@ export default function App() {
   const [authLoading,setAuthLoading]=useState(true);
   const [activeTab,setActiveTab]=useState('dashboard');
   const [sidebarCollapsed,setSidebarCollapsed]=useState(false);
+  const [mobileSidebarOpen,setMobileSidebarOpen]=useState(false);
   const [searchQuery,setSearchQuery]=useState('');
   const [staff,setStaff]=useState([]);
   const [services,setServices]=useState([]);
@@ -330,11 +331,12 @@ export default function App() {
 
   return <div className="min-h-screen bg-[#FAF7F2] text-[#1F2937] flex">
     <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed}
+      mobileOpen={mobileSidebarOpen} setMobileOpen={setMobileSidebarOpen}
       onOpenAddAppointment={()=>openAppointment()} role={role} currentUser={currentUser} onLogout={logout}
       counts={{clients:clients.length,staff:staff.length,appointments:kpis.todayAppointments}}/>
-    <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarCollapsed?'ml-20':'ml-64'}`}>
-      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} onOpenAddAppointment={()=>openAppointment()} activeTabTitle={titles[activeTab]} role={role}/>
-      <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
+    <div className={`flex-1 min-w-0 flex flex-col transition-all duration-300 ml-0 ${sidebarCollapsed?'lg:ml-20':'lg:ml-64'}`}>
+      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} onOpenAddAppointment={()=>openAppointment()} onToggleSidebar={()=>setMobileSidebarOpen(true)} activeTabTitle={titles[activeTab]} role={role}/>
+      <main className="flex-1 p-3 sm:p-6 max-w-7xl w-full mx-auto min-w-0">
         {activeTab==='dashboard'&&<DashboardOverview kpis={kpis} appointments={appointments} activities={activities} clients={clients} invoices={invoices} expenses={expenses} onOpenAddAppointment={()=>openAppointment()} setActiveTab={setActiveTab} role={role}/>}
         {activeTab==='calendar'&&<AppointmentsCalendar appointments={appointments} staff={staff} clients={clients} onOpenAddAppointment={openAppointment}/>}
         {activeTab==='clients'&&<ClientDatabase clients={clients} onSelectClient={setSelectedClient} onOpenAddClient={()=>setIsAddClientOpen(true)} searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>}
