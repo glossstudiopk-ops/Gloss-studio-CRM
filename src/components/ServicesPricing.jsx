@@ -79,10 +79,10 @@ export default function ServicesPricing({services,onAddService,onUpdateService,o
         <h2 className="font-serif-luxury text-2xl font-bold">Services & Pricing</h2>
         <p className="text-xs text-[#6B7280] mt-1">This catalog is the source for the public menu on glossstudiopk.com.</p>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row w-full md:w-auto items-stretch sm:items-center gap-3">
         <div className="relative">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]"/>
-          <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder="Search treatments..." className="pl-9 pr-4 py-2 text-xs bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl focus:outline-none focus:border-[#C5A059]"/>
+          <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder="Search treatments..." className="w-full sm:w-auto pl-9 pr-4 py-2 text-xs bg-[#FAF7F2] border border-[#E8DFD1] rounded-xl focus:outline-none focus:border-[#C5A059]"/>
         </div>
         {canEdit&&<button onClick={openAdd} className="gold-gradient-bg text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2"><Plus size={15}/>Add Service</button>}
       </div>
@@ -93,7 +93,7 @@ export default function ServicesPricing({services,onAddService,onUpdateService,o
         <div>
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2 text-xs text-[#C5A059] font-bold"><Sparkles size={14}/><span>{service.subcategory||'Aesthetic'}</span></div>
-            {canEdit&&<div className="flex gap-1"><button onClick={()=>openEdit(service)} className="p-2 rounded-lg hover:bg-[#FAF7F2]" title="Edit"><Pencil size={14}/></button><button onClick={()=>remove(service)} className="p-2 rounded-lg hover:bg-rose-50 text-rose-600" title="Remove"><Trash2 size={14}/></button></div>}
+            {canEdit&&<div className="flex gap-2 shrink-0"><button onClick={()=>openEdit(service)} className="px-2.5 py-1.5 rounded-lg border border-[#E8DFD1] hover:bg-[#FAF7F2] text-[10px] font-bold flex items-center gap-1" title="Edit Service"><Pencil size={13}/>Edit</button><button onClick={()=>remove(service)} className="px-2.5 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-rose-600 text-[10px] font-bold flex items-center gap-1" title="Remove Service"><Trash2 size={13}/>Remove</button></div>}
           </div>
           <h3 className="font-serif-luxury text-xl font-bold mt-2">{service.name}</h3>
           {service.description&&<p className="text-xs text-[#6B7280] mt-2 leading-relaxed">{service.description}</p>}
