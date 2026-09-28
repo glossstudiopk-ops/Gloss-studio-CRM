@@ -105,7 +105,8 @@ export default function App() {
       id:a.id,clientId:a.client_id,clientName:a.clients?.full_name||'',clientPhone:a.clients?.phone||'',
       serviceId:a.service_id,serviceName:a.services?.name||'',category:'Aesthetic',
       staffId:a.staff_id,staffName:a.staff?.full_name||'',time:String(a.appointment_time||'').slice(0,5),
-      date:a.appointment_date,duration:null,price:Number(a.final_price||0),status:statusToUi(a.status),notes:a.notes||''
+      date:a.appointment_date,duration:null,price:Number(a.final_price||0),status:statusToUi(a.status),notes:a.notes||'',
+      pricingDetail:a.pricing_detail||null,quantity:a.quantity==null?null:Number(a.quantity),unitPrice:a.unit_price==null?null:Number(a.unit_price)
     })));
 
     if(role==='admin'||role==='reception'){
@@ -149,7 +150,8 @@ export default function App() {
           staff:a.staff?.full_name||'',
           amount:Number(a.final_price||0),
           status:statusToUi(a.status),
-          notes:a.notes||''
+          notes:a.notes||'',
+          pricingDetail:a.pricing_detail||null
         });
       });
       setClients((clientsRes.data||[]).map(c=>({
@@ -213,7 +215,10 @@ export default function App() {
       p_appointment_date:apt.date,
       p_appointment_time:apt.time,
       p_final_price:Number(apt.price||0),
-      p_notes:apt.notes||null
+      p_notes:apt.notes||null,
+      p_pricing_detail:apt.pricingDetail||null,
+      p_quantity:apt.quantity||null,
+      p_unit_price:apt.unitPrice||null
     });
     if(error) return {ok:false,message:error.message};
     await loadData();
