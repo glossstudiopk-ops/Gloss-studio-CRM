@@ -21,7 +21,7 @@ Deno.serve(async req=>{
     try{
       const res=await fetch("https://api.resend.com/domains",{headers:{Authorization:"Bearer "+emailKey}});
       if(res.ok){
-        const out=await res.json(),domain=String(from).split("@")[1]?.toLowerCase();
+        const out=await res.json(),domain=String(from).match(/@([^>\\s]+)/)?.[1]?.toLowerCase();
         const found=(out.data||[]).find((x:any)=>String(x.name).toLowerCase()===domain);
         if(found?.status==="verified"){emailStatus="verified";}
         else emailDetail=found?"Domain status: "+found.status:"Sender domain is not listed as verified by Resend.";
