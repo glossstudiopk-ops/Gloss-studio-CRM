@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { ArrowLeft, ArrowRight, Download, Printer, RefreshCw, TrendingUp } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download, Send, RefreshCw, Mail, MessageCircle, X } from 'lucide-react';
 
 const money=n=>'Rs. '+Number(n||0).toLocaleString('en-PK',{minimumFractionDigits:0,maximumFractionDigits:2});
 const localDate=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
@@ -37,15 +37,6 @@ async function allRows(base){
     offset+=1000;
   }
 }
-function csvEscape(v){
-  const s=String(v??'');
-  return /[,\n"]/.test(s)?'"'+s.replaceAll('"','""')+'"':s;
-}
-function exportCSV(name,rows){
-  const csv='\uFEFF'+rows.map(row=>row.map(csvEscape).join(',')).join('\r\n');
-  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-  const a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);
-}
 export default function BusinessReports(){
   const [period,setPeriod]=useState('month');
   const [anchor,setAnchor]=useState(localDate(new Date()));
@@ -53,6 +44,12 @@ export default function BusinessReports(){
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState('');
   const [refresh,setRefresh]=useState(0);
+  const [reportBusy,setReportBusy]=useState(false);
+  const [sendOpen,setSendOpen]=useState(false);
+  const [sendChannel,setSendChannel]=useState('email');
+  const [sendTo,setSendTo]=useState('');
+  const [whatsappConsent,setWhatsappConsent]=useState(false);
+  const [reportMessage,setReportMessage]=useState('');
   const range=useMemo(()=>getWindow(period,anchor),[period,anchor]);
 
   useEffect(()=>{
@@ -108,17 +105,51 @@ export default function BusinessReports(){
       newClients:clients.length,invoices:invoices.length};
   },[report,period]);
 
-  const download=()=>{
-    if(!report||!stats)return;
-    const rows=[['GLOSS STUDIO — BUSINESS REPORT',range.label],['Period start',range.start],['Period end',range.end],
-      ['Invoiced Sales (not verified bank deposits)',stats.sales],['Daily expense payments',stats.direct],['Payable payments',stats.payablePaid],
-      ['Total recorded outflows',stats.outflows],['Overall unpaid payables (as of now)',stats.outstanding],
-      ['Overall overdue payables (as of now)',stats.overdue],['Bookings',stats.bookings],['Completed appointments',stats.completed],['New clients',stats.newClients],[],
-      ['Transaction Type','Date','Reference / Description','Category / Method','Amount (Rs.)']];
-    report.invoices.forEach(x=>rows.push(['Invoice',x.invoice_date,x.invoice_number,x.payment_method,Number(x.total)]));
-    report.expenses.forEach(x=>rows.push(['Daily Expense',x.expense_date,x.title,x.category,Number(x.amount)]));
-    report.payments.forEach(x=>rows.push(['Payable Payment',x.payment_date,report.payables.find(b=>b.id===x.payable_id)?.title||x.payable_id,x.method,Number(x.amount)]));
-    exportCSV('gloss-business-'+period+'-'+range.start+'.csv',rows);
+
+  const parseFunctionError=async error=>{
+    try{const payload=await error.context?.json?.();if(payload?.error)return payload.error;}catch{}
+    return error?.message||'The report service could not complete this request.';
+  };
+  const reportPayload={period,start:range.start,end:range.end};
+
+  const download=async()=>{
+    if(loading||reportBusy||!report)return;
+    setReportMessage('');setReportBusy(true);
+    try{
+      const {data,error:err}=await supabase.functions.invoke('business-report',{
+        body:{action:'download',...reportPayload}
+      });
+      if(err)throw new Error(await parseFunctionError(err));
+      const blob=data instanceof Blob?data:new Blob([data],{type:'application/pdf'});
+      if(blob.type.includes('json')){
+        const payload=JSON.parse(await blob.text());throw new Error(payload?.error||'Could not create the PDF.');
+      }
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;a.download='Gloss-Studio-'+period+'-'+range.start+'-'+range.end+'.pdf';
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),5000);
+      setReportMessage('PDF report downloaded.');
+    }catch(e){setReportMessage(e.message||'Could not download the report.');}
+    finally{setReportBusy(false);}
+  };
+
+  const sendReport=async e=>{
+    e.preventDefault();
+    if(loading||reportBusy||!report)return;
+    setReportBusy(true);setReportMessage('');
+    try{
+      const {data,error:err}=await supabase.functions.invoke('business-report',{
+        body:{action:'send',...reportPayload,channel:sendChannel,recipient:sendTo.trim(),
+          consent:sendChannel==='whatsapp'?whatsappConsent:undefined}
+      });
+      if(err)throw new Error(await parseFunctionError(err));
+      if(data?.error)throw new Error(data.error);
+      setSendOpen(false);
+      setReportMessage(data?.message||'Report has been accepted for delivery.');
+      setSendTo('');setWhatsappConsent(false);
+    }catch(e){setReportMessage(e.message||'Report could not be sent.');}
+    finally{setReportBusy(false);}
   };
 
   return <div className="space-y-5 min-w-0">
@@ -127,8 +158,8 @@ export default function BusinessReports(){
         <div><h2 className="font-serif-luxury text-2xl font-bold">Business Reports</h2><p className="text-xs text-[#6B7280] mt-1">Invoice sales, bookings, operating expenses, payable payments and outstanding bills.</p></div>
         <div className="flex flex-wrap gap-2">
           <button onClick={()=>setRefresh(n=>n+1)} disabled={loading} className="px-3 py-2 border rounded-xl text-xs flex gap-1 items-center"><RefreshCw size={14}/>Refresh</button>
-          <button onClick={download} disabled={!report||loading} className="px-3 py-2 border rounded-xl text-xs flex gap-1 items-center"><Download size={14}/>CSV Export</button>
-          <button onClick={()=>window.print()} disabled={!report||loading} className="px-3 py-2 border rounded-xl text-xs flex gap-1 items-center"><Printer size={14}/>Print</button>
+          <button onClick={download} disabled={!report||loading||reportBusy} className="gold-gradient-bg text-white px-3 py-2 rounded-xl text-xs font-bold flex gap-1 items-center disabled:opacity-50"><Download size={14}/>{reportBusy?'Preparing...':'Download Report'}</button>
+          <button onClick={()=>{setReportMessage('');setSendOpen(true);}} disabled={!report||loading||reportBusy} className="px-3 py-2 border border-[#C5A059] text-[#946F2E] rounded-xl text-xs font-bold flex gap-1 items-center disabled:opacity-50"><Send size={14}/>Send Report</button>
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-2 mt-5">
@@ -142,6 +173,7 @@ export default function BusinessReports(){
       <h3 className="font-serif-luxury text-xl font-bold mt-4">{range.label}</h3>
     </div>
     {error&&<div role="alert" className="text-rose-700 bg-rose-50 p-3 rounded-xl text-sm">{error}</div>}
+    {reportMessage&&<div role="status" className="text-sm border border-[#E8DFD1] bg-white rounded-xl p-3">{reportMessage}</div>}
     {loading&&<div className="text-sm text-[#6B7280]">Loading report data...</div>}
     {stats&&!loading&&<>
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
@@ -178,5 +210,24 @@ export default function BusinessReports(){
           </tbody></table></div>}
       </div>
     </>}
+    {sendOpen&&<div className="fixed inset-0 z-50 bg-black/45 p-3 flex items-center justify-center">
+      <div className="bg-white w-full max-w-md max-h-[94vh] overflow-y-auto rounded-2xl border border-[#E8DFD1] p-5 sm:p-6 space-y-4">
+        <div className="flex items-center justify-between gap-3"><div><h3 className="font-serif-luxury text-xl font-bold">Send PDF Report</h3><p className="text-xs text-[#6B7280] mt-1">{range.label} · Confidential management report</p></div><button type="button" aria-label="Close" onClick={()=>setSendOpen(false)}><X size={19}/></button></div>
+        <form onSubmit={sendReport} className="space-y-4 text-sm">
+          <div><label className="font-bold text-xs">Delivery channel</label><div className="grid grid-cols-2 gap-2 mt-2">
+            <button type="button" onClick={()=>{setSendChannel('email');setSendTo('');setWhatsappConsent(false);}} className={'rounded-xl border p-3 flex justify-center gap-2 items-center text-xs '+(sendChannel==='email'?'border-[#C5A059] bg-[#FAF7F2] font-bold':'border-[#E8DFD1]')}><Mail size={15}/>Email</button>
+            <button type="button" onClick={()=>{setSendChannel('whatsapp');setSendTo('');}} className={'rounded-xl border p-3 flex justify-center gap-2 items-center text-xs '+(sendChannel==='whatsapp'?'border-[#C5A059] bg-[#FAF7F2] font-bold':'border-[#E8DFD1]')}><MessageCircle size={15}/>WhatsApp</button>
+          </div></div>
+          <div><label className="font-bold text-xs">{sendChannel==='email'?'Recipient email address':'WhatsApp number (international format)'}</label>
+            <input required type={sendChannel==='email'?'email':'tel'} placeholder={sendChannel==='email'?'manager@example.com':'+923001234567'}
+              pattern={sendChannel==='whatsapp'?'\\+?[1-9][0-9]{7,14}':undefined}
+              value={sendTo} onChange={e=>setSendTo(e.target.value)} className="w-full mt-1 p-3 rounded-xl border border-[#E8DFD1] bg-[#FAF7F2]"/>
+          </div>
+          {sendChannel==='whatsapp'&&<label className="flex gap-2 text-xs leading-relaxed text-[#6B7280]"><input required type="checkbox" checked={whatsappConsent} onChange={e=>setWhatsappConsent(e.target.checked)} className="self-start mt-0.5"/>I confirm the recipient has agreed to receive this report via WhatsApp.</label>}
+          <p className="text-xs text-[#6B7280] leading-relaxed">{sendChannel==='email'?'A PDF copy will be attached to a secure business email once the sender domain and email service are configured.':'The PDF is delivered using an approved WhatsApp Business document template once your official WhatsApp integration is configured.'}</p>
+          <div className="flex gap-2 justify-end"><button type="button" onClick={()=>setSendOpen(false)} className="px-4 py-2.5 rounded-xl border border-[#E8DFD1]">Cancel</button><button disabled={reportBusy} className="gold-gradient-bg text-white px-5 py-2.5 rounded-xl font-bold disabled:opacity-50">{reportBusy?'Sending...':'Send PDF'}</button></div>
+        </form>
+      </div>
+    </div>}
   </div>;
 }
