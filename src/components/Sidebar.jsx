@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, CalendarDays, Users, Sparkles, UserCheck, Settings, LogOut, ChevronLeft, ChevronRight, Plus, FileText, Receipt, UserRound, X, BarChart3, Wallet } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, Users, Sparkles, UserCheck, Settings, LogOut, ChevronLeft, ChevronRight, Plus, FileText, Receipt, UserRound, X, BarChart3, Wallet, Send } from 'lucide-react';
 
 export default function Sidebar({activeTab,setActiveTab,collapsed,setCollapsed,mobileOpen,setMobileOpen,onOpenAddAppointment,role,currentUser,onLogout,counts}) {
   const all=[
@@ -12,6 +12,7 @@ export default function Sidebar({activeTab,setActiveTab,collapsed,setCollapsed,m
     {id:'expenses',label:'Daily Expenses',icon:Receipt,roles:['admin','reception']},
     {id:'payables',label:'Payables & Purchases',icon:Wallet,roles:['admin']},
     {id:'reports',label:'Business Reports',icon:BarChart3,roles:['admin']},
+    {id:'messaging',label:'Messaging Setup',icon:Send,roles:['admin']},
     {id:'settings',label:'Settings',icon:Settings,roles:['admin']},
     {id:'my-work',label:'My Profile & Work',icon:UserRound,roles:['staff']}
   ];
