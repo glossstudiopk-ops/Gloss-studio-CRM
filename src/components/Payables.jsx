@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Plus, RefreshCw, Wallet, CalendarClock, CreditCard, X } from 'lucide-react';
 
-const today=()=>new Date().toLocaleDateString('en-CA');
+const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');};
 const money=n=>'Rs. '+Number(n||0).toLocaleString('en-PK',{maximumFractionDigits:2});
 const input='w-full mt-1 px-3 py-2.5 rounded-xl border border-[#E8DFD1] bg-[#FAF7F2] text-sm';
 const categories=['Rent','Utilities','Supplies','Inventory','Staff','Maintenance','Marketing','Equipment','Taxes & Fees','Other'];
