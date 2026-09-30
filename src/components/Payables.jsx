@@ -19,6 +19,8 @@ export default function Payables(){
   const [bill,setBill]=useState(emptyBill);
   const [recurring,setRecurring]=useState(emptyRecurring);
   const [selected,setSelected]=useState(null);
+  const [editBillId,setEditBillId]=useState(null);
+  const [editTemplateId,setEditTemplateId]=useState(null);
   const [payment,setPayment]=useState({amount:'',payment_date:today(),method:'Cash',reference:'',note:''});
   const [filter,setFilter]=useState('all');
   const load=async()=>{
@@ -52,20 +54,22 @@ export default function Payables(){
 
   const saveBill=async e=>{
     e.preventDefault();setBusy(true);setError('');
-    const {error:err}=await supabase.from('payables').insert({
-      ...bill,total_amount:Number(bill.total_amount),invoice_reference:bill.invoice_reference||null,
-      vendor:bill.vendor||null,description:bill.description||null,due_date:bill.due_date||null
-    });
+    const payload={...bill,total_amount:Number(bill.total_amount),invoice_reference:bill.invoice_reference||null,
+      vendor:bill.vendor||null,description:bill.description||null,due_date:bill.due_date||null};
+    const query=editBillId?supabase.from('payables').update(payload).eq('id',editBillId)
+      :supabase.from('payables').insert(payload);
+    const {error:err}=await query;
     if(err){setError(err.message);setBusy(false);return;}
-    setShow('');setBill(emptyBill());await load();
+    setShow('');setEditBillId(null);setBill(emptyBill());await load();
   };
   const saveRecurring=async e=>{
     e.preventDefault();setBusy(true);setError('');
-    const {error:err}=await supabase.from('recurring_payables').insert({
-      ...recurring,amount:Number(recurring.amount),vendor:recurring.vendor||null,description:recurring.description||null
-    });
+    const payload={...recurring,amount:Number(recurring.amount),vendor:recurring.vendor||null,description:recurring.description||null};
+    const query=editTemplateId?supabase.from('recurring_payables').update(payload).eq('id',editTemplateId)
+      :supabase.from('recurring_payables').insert(payload);
+    const {error:err}=await query;
     if(err){setError(err.message);setBusy(false);return;}
-    setShow('');setRecurring(emptyRecurring());await load();
+    setShow('');setEditTemplateId(null);setRecurring(emptyRecurring());await load();
   };
   const recordPayment=async e=>{
     e.preventDefault();setBusy(true);setError('');
@@ -81,14 +85,27 @@ export default function Payables(){
     if(err) setError(err.message); else await load();
   };
   const openPayment=b=>{setError('');setPayment({amount:outstanding(b).toFixed(2),payment_date:today(),method:'Cash',reference:'',note:''});setSelected(b);};
+  const editBill=b=>{
+    setError('');setEditBillId(b.id);
+    setBill({title:b.title,vendor:b.vendor||'',category:b.category,payable_type:b.payable_type,
+      invoice_reference:b.invoice_reference||'',total_amount:String(b.total_amount),
+      bill_date:b.bill_date,due_date:b.due_date||'',description:b.description||''});
+    setShow('bill');
+  };
+  const editTemplate=t=>{
+    setError('');setEditTemplateId(t.id);
+    setRecurring({title:t.title,vendor:t.vendor||'',category:t.category,amount:String(t.amount),
+      frequency:t.frequency,next_due_on:t.next_due_on,description:t.description||''});
+    setShow('recurring');
+  };
 
   return <div className="space-y-5 min-w-0">
     <div className="bg-white border border-[#E8DFD1] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div><h2 className="font-serif-luxury text-2xl font-bold">Payables & Purchases</h2><p className="text-xs text-[#6B7280] mt-1">Supplier purchases, bills, fixed costs, due dates and partial payments.</p></div>
       <div className="flex flex-wrap gap-2">
         <button onClick={load} disabled={busy} title="Refresh and generate due recurring bills" className="px-3 py-2 border rounded-xl text-xs flex gap-1 items-center"><RefreshCw size={14}/>Refresh</button>
-        <button onClick={()=>{setError('');setShow('recurring');}} className="px-3 py-2 border border-[#C5A059] text-[#946F2E] rounded-xl text-xs font-bold flex gap-1 items-center"><CalendarClock size={14}/>Fixed / Recurring</button>
-        <button onClick={()=>{setError('');setShow('bill');}} className="gold-gradient-bg text-white px-3 py-2 rounded-xl text-xs font-bold flex gap-1 items-center"><Plus size={14}/>Add Payable</button>
+        <button onClick={()=>{setError('');setEditTemplateId(null);setRecurring(emptyRecurring());setShow('recurring');}} className="px-3 py-2 border border-[#C5A059] text-[#946F2E] rounded-xl text-xs font-bold flex gap-1 items-center"><CalendarClock size={14}/>Fixed / Recurring</button>
+        <button onClick={()=>{setError('');setEditBillId(null);setBill(emptyBill());setShow('bill');}} className="gold-gradient-bg text-white px-3 py-2 rounded-xl text-xs font-bold flex gap-1 items-center"><Plus size={14}/>Add Payable</button>
       </div>
     </div>
     {error&&<div role="alert" className="p-3 text-sm text-rose-700 rounded-xl bg-rose-50 border border-rose-200">{error}</div>}
@@ -97,18 +114,18 @@ export default function Payables(){
     </div>
     <div className="bg-white border border-[#E8DFD1] rounded-2xl overflow-hidden">
       <div className="p-4 flex flex-wrap justify-between items-center gap-3 border-b"><h3 className="font-bold">Purchase & Bill Ledger</h3><select value={filter} onChange={e=>setFilter(e.target.value)} className={input+' !w-auto !mt-0'}><option value="all">All bills</option><option value="open">Outstanding</option><option value="overdue">Overdue</option><option value="paid">Paid</option></select></div>
-      {visible.length===0?<p className="p-9 text-center text-sm text-[#6B7280]">No records in this view.</p>:<div className="overflow-x-auto"><table className="w-full min-w-[780px] text-xs text-left"><thead className="bg-[#FAF7F2]"><tr>{['Bill / Supplier','Category','Due Date','Billed','Paid','Balance','Status','Action'].map(x=><th key={x} className="p-3">{x}</th>)}</tr></thead><tbody>{visible.map(b=><tr key={b.id} className="border-t border-[#F0ECE1]"><td className="p-3"><b>{b.title}</b><div className="text-[#6B7280]">{b.vendor||'—'}{b.invoice_reference?' · '+b.invoice_reference:''}</div></td><td className="p-3">{b.category}{b.payable_type==='fixed'&&<div className="text-[10px] text-[#C5A059]">Fixed cost</div>}</td><td className="p-3">{b.due_date||'—'}</td><td className="p-3">{money(b.total_amount)}</td><td className="p-3">{money(paidById[b.id])}</td><td className="p-3 font-bold">{money(outstanding(b))}</td><td className="p-3"><span className={status(b)==='Overdue'?'text-rose-600 font-bold':status(b)==='Paid'?'text-emerald-700':'text-[#946F2E]'}>{status(b)}</span></td><td className="p-3">{outstanding(b)>0.009&&<button onClick={()=>openPayment(b)} className="border border-[#C5A059] text-[#946F2E] rounded-lg px-2 py-1.5 font-bold">Record payment</button>}</td></tr>)}</tbody></table></div>}
+      {visible.length===0?<p className="p-9 text-center text-sm text-[#6B7280]">No records in this view.</p>:<div className="overflow-x-auto"><table className="w-full min-w-[780px] text-xs text-left"><thead className="bg-[#FAF7F2]"><tr>{['Bill / Supplier','Category','Due Date','Billed','Paid','Balance','Status','Action'].map(x=><th key={x} className="p-3">{x}</th>)}</tr></thead><tbody>{visible.map(b=><tr key={b.id} className="border-t border-[#F0ECE1]"><td className="p-3"><b>{b.title}</b><div className="text-[#6B7280]">{b.vendor||'—'}{b.invoice_reference?' · '+b.invoice_reference:''}</div></td><td className="p-3">{b.category}{b.payable_type==='fixed'&&<div className="text-[10px] text-[#C5A059]">Fixed cost</div>}</td><td className="p-3">{b.due_date||'—'}</td><td className="p-3">{money(b.total_amount)}</td><td className="p-3">{money(paidById[b.id])}</td><td className="p-3 font-bold">{money(outstanding(b))}</td><td className="p-3"><span className={status(b)==='Overdue'?'text-rose-600 font-bold':status(b)==='Paid'?'text-emerald-700':'text-[#946F2E]'}>{status(b)}</span></td><td className="p-3"><div className="flex gap-2"><button onClick={()=>editBill(b)} className="border border-[#E8DFD1] rounded-lg px-2 py-1.5 font-bold">Edit</button>{outstanding(b)>0.009&&<button onClick={()=>openPayment(b)} className="border border-[#C5A059] text-[#946F2E] rounded-lg px-2 py-1.5 font-bold">Record payment</button>}</div></td></tr>)}</tbody></table></div>}
     </div>
     <div className="bg-white border border-[#E8DFD1] rounded-2xl overflow-hidden">
       <div className="p-4"><h3 className="font-bold">Recurring Fixed Costs</h3><p className="text-xs text-[#6B7280] mt-1">Due bills are generated automatically when an admin opens or refreshes this page. An entry is created once per due date.</p></div>
-      {templates.length===0?<p className="px-4 pb-6 text-sm text-[#6B7280]">Add rent, electricity, internet or other recurring costs above.</p>:<div className="overflow-x-auto"><table className="w-full min-w-[600px] text-xs"><thead className="bg-[#FAF7F2]"><tr>{['Expense','Amount','Frequency','Next Due','Status'].map(x=><th key={x} className="text-left p-3">{x}</th>)}</tr></thead><tbody>{templates.map(t=><tr key={t.id} className="border-t"><td className="p-3"><b>{t.title}</b><div className="text-[#6B7280]">{t.vendor||t.category}</div></td><td className="p-3">{money(t.amount)}</td><td className="p-3 capitalize">{t.frequency}</td><td className="p-3">{t.next_due_on}</td><td className="p-3"><button className="text-[#946F2E] underline" onClick={()=>toggleRecurring(t)}>{t.active?'Active · Pause':'Paused · Resume'}</button></td></tr>)}</tbody></table></div>}
+      {templates.length===0?<p className="px-4 pb-6 text-sm text-[#6B7280]">Add rent, electricity, internet or other recurring costs above.</p>:<div className="overflow-x-auto"><table className="w-full min-w-[600px] text-xs"><thead className="bg-[#FAF7F2]"><tr>{['Expense','Amount','Frequency','Next Due','Status'].map(x=><th key={x} className="text-left p-3">{x}</th>)}</tr></thead><tbody>{templates.map(t=><tr key={t.id} className="border-t"><td className="p-3"><b>{t.title}</b><div className="text-[#6B7280]">{t.vendor||t.category}</div></td><td className="p-3">{money(t.amount)}</td><td className="p-3 capitalize">{t.frequency}</td><td className="p-3">{t.next_due_on}</td><td className="p-3"><div className="flex gap-3"><button className="text-[#946F2E] underline" onClick={()=>editTemplate(t)}>Edit</button><button className="text-[#946F2E] underline" onClick={()=>toggleRecurring(t)}>{t.active?'Active · Pause':'Paused · Resume'}</button></div></td></tr>)}</tbody></table></div>}
     </div>
     <div className="bg-white border border-[#E8DFD1] rounded-2xl overflow-hidden">
       <h3 className="font-bold p-4">Payment History</h3>
       {payments.length===0?<p className="px-4 pb-6 text-sm text-[#6B7280]">No supplier or bill payments recorded.</p>:<div className="overflow-x-auto"><table className="w-full min-w-[580px] text-xs"><thead className="bg-[#FAF7F2]"><tr>{['Date','Payable','Method','Reference','Amount'].map(x=><th key={x} className="text-left p-3">{x}</th>)}</tr></thead><tbody>{payments.map(p=><tr key={p.id} className="border-t"><td className="p-3">{p.payment_date}</td><td className="p-3">{bills.find(b=>b.id===p.payable_id)?.title||'—'}</td><td className="p-3">{p.method}</td><td className="p-3">{p.reference||'—'}</td><td className="p-3 font-semibold">{money(p.amount)}</td></tr>)}</tbody></table></div>}
     </div>
     {(show||selected)&&<div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-3"><div className="bg-white w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-2xl p-5 sm:p-6 space-y-4">
-      <div className="flex items-center justify-between"><h3 className="font-serif-luxury text-xl font-bold">{selected?'Record Payable Payment':show==='bill'?'Add Purchase / Payable':'Add Recurring Fixed Cost'}</h3><button onClick={()=>{setShow('');setSelected(null);setError('');}} aria-label="Close"><X size={19}/></button></div>
+      <div className="flex items-center justify-between"><h3 className="font-serif-luxury text-xl font-bold">{selected?'Record Payable Payment':show==='bill'?(editBillId?'Edit Payable':'Add Purchase / Payable'):(editTemplateId?'Edit Recurring Cost':'Add Recurring Fixed Cost')}</h3><button onClick={()=>{setShow('');setSelected(null);setEditBillId(null);setEditTemplateId(null);setError('');}} aria-label="Close"><X size={19}/></button></div>
       {error&&<div className="text-sm text-rose-700 bg-rose-50 p-2 rounded-lg">{error}</div>}
       {selected?<form onSubmit={recordPayment} className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
         <p className="sm:col-span-2 text-sm">Remaining balance: <b>{money(outstanding(selected))}</b></p>
@@ -128,7 +145,7 @@ export default function Payables(){
         <label>Due date<input type="date" className={input} value={bill.due_date} onChange={e=>setBill({...bill,due_date:e.target.value})}/></label>
         <label className="sm:col-span-2">Invoice / receipt reference<input className={input} value={bill.invoice_reference} onChange={e=>setBill({...bill,invoice_reference:e.target.value})}/></label>
         <label className="sm:col-span-2">Description<textarea className={input} value={bill.description} onChange={e=>setBill({...bill,description:e.target.value})}/></label>
-        <button disabled={busy} className="sm:col-span-2 gold-gradient-bg text-white p-3 rounded-xl font-bold">Save Payable</button>
+        <button disabled={busy} className="sm:col-span-2 gold-gradient-bg text-white p-3 rounded-xl font-bold">{editBillId?'Update Payable':'Save Payable'}</button>
       </form>:<form onSubmit={saveRecurring} className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
         <label className="sm:col-span-2">Fixed cost name *<input required className={input} value={recurring.title} onChange={e=>setRecurring({...recurring,title:e.target.value})}/></label>
         <label>Payee<input className={input} value={recurring.vendor} onChange={e=>setRecurring({...recurring,vendor:e.target.value})}/></label>
@@ -137,7 +154,7 @@ export default function Payables(){
         <label>Frequency<select className={input} value={recurring.frequency} onChange={e=>setRecurring({...recurring,frequency:e.target.value})}><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select></label>
         <label className="sm:col-span-2">First / next due date *<input required type="date" className={input} value={recurring.next_due_on} onChange={e=>setRecurring({...recurring,next_due_on:e.target.value})}/></label>
         <label className="sm:col-span-2">Notes<textarea className={input} value={recurring.description} onChange={e=>setRecurring({...recurring,description:e.target.value})}/></label>
-        <button disabled={busy} className="sm:col-span-2 gold-gradient-bg text-white p-3 rounded-xl font-bold">Save Recurring Cost</button>
+        <button disabled={busy} className="sm:col-span-2 gold-gradient-bg text-white p-3 rounded-xl font-bold">{editTemplateId?'Update Recurring Cost':'Save Recurring Cost'}</button>
       </form>}
     </div></div>}
   </div>;
