@@ -60,6 +60,8 @@ export default function BusinessReports(){
     const run=async()=>{
       setLoading(true);setError('');
       try{
+        const generated=await supabase.rpc('generate_recurring_payables');
+        if(generated.error)throw generated.error;
         const [invoices,expenses,payments,payables,appointments,clients]=await Promise.all([
           allRows(supabase.from('invoices').select('id,invoice_number,invoice_date,total,payment_method').gte('invoice_date',range.start).lte('invoice_date',range.end).order('invoice_date')),
           allRows(supabase.from('expenses').select('id,expense_date,title,category,amount').gte('expense_date',range.start).lte('expense_date',range.end).order('expense_date')),
