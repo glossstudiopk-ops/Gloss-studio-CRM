@@ -18,7 +18,7 @@ export default function Expenses({ expenses, onAddExpense, canCreate=true }) {
 
   return <div className="space-y-6">
     <div className="bg-white border border-[#E8DFD1] rounded-2xl p-5 flex items-center justify-between">
-      <div><h3 className="font-serif-luxury text-2xl font-bold">Daily Expenses</h3><p className="text-xs text-[#6B7280]">Record and review daily operating expenses.</p></div>
+      <div><h3 className="font-serif-luxury text-2xl font-bold">Daily Expenses</h3><p className="text-xs text-[#6B7280]">Record everyday expenses paid immediately. Supplier bills, purchases on credit and fixed recurring costs belong in the admin Payables tab; do not enter the same payment twice.</p></div>
       <div className="flex items-center gap-3"><div className="text-right"><span className="text-[10px] uppercase text-[#6B7280] font-bold">Recorded Total</span><div className="font-bold text-[#C5A059]">Rs. {total.toLocaleString()}</div></div>{canCreate&&<button onClick={()=>setShow(true)} className="gold-gradient-bg text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2"><Plus size={15}/>Add Expense</button>}</div>
     </div>
     {show&&<form onSubmit={submit} className="bg-white border border-[#E8DFD1] rounded-2xl p-5 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
