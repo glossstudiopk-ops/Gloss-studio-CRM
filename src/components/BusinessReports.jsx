@@ -68,7 +68,7 @@ export default function BusinessReports(){
           allRows(supabase.from('payable_payments').select('id,payment_date,payable_id,amount,method').gte('payment_date',range.start).lte('payment_date',range.end).order('payment_date')),
           allRows(supabase.from('payables').select('id,title,category,total_amount,due_date,bill_date').order('bill_date')),
           allRows(supabase.from('appointments').select('id,appointment_date,status,final_price').gte('appointment_date',range.start).lte('appointment_date',range.end)),
-          allRows(supabase.from('clients').select('id,created_at').gte('created_at',range.start+'T00:00:00').lte('created_at',range.end+'T23:59:59'))
+          allRows(supabase.from('clients').select('id,created_at').gte('created_at',range.start+'T00:00:00+05:00').lte('created_at',range.end+'T23:59:59.999+05:00'))
         ]);
         const allPayments=await allRows(supabase.from('payable_payments').select('payable_id,amount'));
         if(!cancelled)setReport({invoices,expenses,payments,payables,appointments,clients,allPayments});
