@@ -64,7 +64,7 @@ export default function Payables(){
   };
   const saveRecurring=async e=>{
     e.preventDefault();setBusy(true);setError('');
-    const payload={...recurring,amount:Number(recurring.amount),vendor:recurring.vendor||null,description:recurring.description||null};
+    const payload={...recurring,amount:Number(recurring.amount),vendor:recurring.vendor||null,description:recurring.description||null,anchor_day:Number(recurring.next_due_on.slice(-2))};
     const query=editTemplateId?supabase.from('recurring_payables').update(payload).eq('id',editTemplateId)
       :supabase.from('recurring_payables').insert(payload);
     const {error:err}=await query;
