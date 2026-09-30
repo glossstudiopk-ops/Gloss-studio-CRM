@@ -15,6 +15,7 @@ import Invoices from './components/Invoices';
 import Expenses from './components/Expenses';
 import Payables from './components/Payables';
 import BusinessReports from './components/BusinessReports';
+import MessagingSetup from './components/MessagingSetup';
 import StaffPortal from './components/StaffPortal';
 import { supabase } from './lib/supabase';
 
@@ -75,7 +76,7 @@ export default function App() {
 
   const role=currentUser?.role;
   const allowedTabs=role==='admin'
-    ? ['dashboard','calendar','clients','services','staff','invoices','expenses','payables','reports','settings']
+    ? ['dashboard','calendar','clients','services','staff','invoices','expenses','payables','reports','messaging','settings']
     : role==='reception'
       ? ['dashboard','calendar','clients','services','invoices','expenses']
       : ['my-work'];
@@ -328,7 +329,7 @@ export default function App() {
   if(authLoading) return <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center text-sm text-[#6B7280]">Loading Gloss Studio CRM...</div>;
   if(!currentUser) return <Login onLogin={setCurrentUser}/>;
 
-  const titles={dashboard:'Dashboard',calendar:'Appointments',clients:'Customers',services:'Services & Pricing',staff:'Staff & Accounts',invoices:'Invoices',expenses:'Daily Expenses',payables:'Payables & Purchases',reports:'Business Reports',settings:'Settings','my-work':'My Profile & Work'};
+  const titles={dashboard:'Dashboard',calendar:'Appointments',clients:'Customers',services:'Services & Pricing',staff:'Staff & Accounts',invoices:'Invoices',expenses:'Daily Expenses',payables:'Payables & Purchases',reports:'Business Reports',messaging:'Messaging Setup',settings:'Settings','my-work':'My Profile & Work'};
   const myStaff=staff.find(s=>s.authUserId===currentUser.id);
 
   return <div className="min-h-screen bg-[#FAF7F2] text-[#1F2937] flex">
@@ -348,6 +349,7 @@ export default function App() {
         {activeTab==='expenses'&&<Expenses expenses={expenses} onAddExpense={addExpense} canCreate={role==='admin'||role==='reception'}/>}
         {activeTab==='payables'&&role==='admin'&&<Payables/>}
         {activeTab==='reports'&&role==='admin'&&<BusinessReports/>}
+        {activeTab==='messaging'&&role==='admin'&&<MessagingSetup/>}
         {activeTab==='settings'&&role==='admin'&&<Settings/>}
         {activeTab==='my-work'&&role==='staff'&&<StaffPortal account={currentUser} staffMember={myStaff} appointments={appointments}/>}
       </main>
