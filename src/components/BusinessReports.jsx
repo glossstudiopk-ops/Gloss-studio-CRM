@@ -58,7 +58,7 @@ export default function BusinessReports(){
   useEffect(()=>{
     let cancelled=false;
     const run=async()=>{
-      setLoading(true);setError('');
+      setLoading(true);setError('');setReport(null);
       try{
         const generated=await supabase.rpc('generate_recurring_payables');
         if(generated.error)throw generated.error;
